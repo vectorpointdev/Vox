@@ -29,9 +29,15 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.andykim.vox
         CODE_SIGN_ENTITLEMENTS: Vox/Vox.entitlements
+        CODE_SIGN_IDENTITY: "Apple Development"
+        DEVELOPMENT_TEAM: 2LARJ8Z62D
+        CODE_SIGN_STYLE: Automatic
         INFOPLIST_FILE: Vox/Resources/Info.plist
         LD_RUNPATH_SEARCH_PATHS: "@executable_path/../Frameworks"
         GENERATE_INFOPLIST_FILE: NO
     dependencies:
       - package: WhisperKit
       - package: KeyboardShortcuts
+    scheme:
+      gatherCoverageData: false
+      testTargets: []

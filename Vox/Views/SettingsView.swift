@@ -21,7 +21,8 @@ struct SettingsView: View {
         }
         .frame(width: 450, height: 280)
         .onAppear {
-            launchAtLogin = SMAppService.mainApp.status == .enabled
+            launchAtLogin = (try? SMAppService.mainApp.status == .enabled) ?? false
+            appState.checkPermissions()
         }
     }
 

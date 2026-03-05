@@ -78,10 +78,9 @@ final class AppState {
     }
 
     func requestMicrophonePermission() {
-        AVCaptureDevice.requestAccess(for: .audio) { [weak self] granted in
-            Task { @MainActor in
-                self?.hasMicrophonePermission = granted
-            }
+        Task {
+            let granted = await AVCaptureDevice.requestAccess(for: .audio)
+            hasMicrophonePermission = granted
         }
     }
 
@@ -130,6 +129,8 @@ final class AppState {
 
         Task {
             do {
+                print("[Vox] Captured \(samples.count) audio samples")
+
                 guard !samples.isEmpty else {
                     statusMessage = "No audio captured"
                     isProcessing = false
@@ -137,6 +138,7 @@ final class AppState {
                 }
 
                 var text = try await sttEngine.transcribe(audioSamples: samples)
+                print("[Vox] Transcription: '\(text)'")
 
                 if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                     statusMessage = "Couldn't understand audio"
@@ -161,6 +163,7 @@ final class AppState {
                 }
 
                 lastTranscription = text
+                print("[Vox] Injecting text: '\(text)'")
                 textInjector.inject(text: text)
 
                 statusMessage = "Ready"

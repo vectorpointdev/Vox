@@ -13,10 +13,11 @@ struct VoxApp: App {
                 .symbolEffect(.pulse, isActive: appState.isRecording)
         }
 
-        Settings {
+        Window("Vox Settings", id: "settings") {
             SettingsView()
                 .environment(appState)
         }
+        .windowResizability(.contentSize)
 
         Window("Welcome to Vox", id: "onboarding") {
             OnboardingView()

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MenuBarView: View {
     @Environment(AppState.self) private var appState
+    @Environment(\.openWindow) private var openWindow
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -51,7 +52,7 @@ struct MenuBarView: View {
             Divider()
 
             Button("Settings...") {
-                NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+                openSettings()
             }
             .keyboardShortcut(",")
 
@@ -62,6 +63,11 @@ struct MenuBarView: View {
         }
         .padding(12)
         .frame(width: 280)
+    }
+
+    private func openSettings() {
+        openWindow(id: "settings")
+        NSApp.activate(ignoringOtherApps: true)
     }
 
     private var statusColor: Color {

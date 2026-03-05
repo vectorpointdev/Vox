@@ -21,13 +21,12 @@ final class AudioSampleBuffer: @unchecked Sendable {
     }
 }
 
-@MainActor
-final class AudioPipeline {
+/// Audio capture pipeline. NOT @MainActor — AVAudioEngine callbacks run on real-time threads.
+final class AudioPipeline: @unchecked Sendable {
     private let engine = AVAudioEngine()
     private let sampleBuffer = AudioSampleBuffer()
     private var isCapturing = false
 
-    // Target format for WhisperKit: 16kHz mono Float32
     private let targetSampleRate: Double = 16000
 
     init() {
@@ -36,14 +35,12 @@ final class AudioPipeline {
             object: engine,
             queue: .main
         ) { [weak self] _ in
-            Task { @MainActor in
-                self?.handleConfigurationChange()
-            }
+            self?.handleConfigurationChange()
         }
     }
 
     func startCapture() throws {
-        _ = sampleBuffer.drain() // Clear any leftover samples
+        _ = sampleBuffer.drain()
         isCapturing = true
 
         let inputNode = engine.inputNode
@@ -62,10 +59,9 @@ final class AudioPipeline {
             throw AudioPipelineError.converterError
         }
 
-        let buffer = sampleBuffer // Capture the Sendable buffer for the closure
+        let buffer = sampleBuffer
 
         inputNode.installTap(onBus: 0, bufferSize: 4096, format: hwFormat) { inputBuffer, _ in
-            // Runs on real-time audio thread — keep minimal
             let ratio = targetFormat.sampleRate / inputBuffer.format.sampleRate
             let frameCount = AVAudioFrameCount(Double(inputBuffer.frameLength) * ratio)
             guard frameCount > 0 else { return }
