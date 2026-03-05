@@ -1,0 +1,37 @@
+name: Vox
+options:
+  bundleIdPrefix: com.andykim
+  deploymentTarget:
+    macOS: "14.0"
+  groupSortPosition: top
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    ENABLE_APP_SANDBOX: NO
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+    SWIFT_STRICT_CONCURRENCY: complete
+packages:
+  WhisperKit:
+    url: https://github.com/argmaxinc/WhisperKit
+    from: "0.9.0"
+  KeyboardShortcuts:
+    url: https://github.com/sindresorhus/KeyboardShortcuts
+    from: "2.0.0"
+targets:
+  Vox:
+    type: application
+    platform: macOS
+    sources:
+      - path: Vox
+        excludes:
+          - Resources/Info.plist
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.andykim.vox
+        CODE_SIGN_ENTITLEMENTS: Vox/Vox.entitlements
+        INFOPLIST_FILE: Vox/Resources/Info.plist
+        LD_RUNPATH_SEARCH_PATHS: "@executable_path/../Frameworks"
+        GENERATE_INFOPLIST_FILE: NO
+    dependencies:
+      - package: WhisperKit
+      - package: KeyboardShortcuts
