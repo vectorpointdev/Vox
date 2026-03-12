@@ -10,6 +10,7 @@ struct SettingsView: View {
     @State private var launchAtLogin = false
     @State private var apiKeyTestResult: String?
     @State private var isTestingAPIKey = false
+    @State private var dictionaryEntries: [DictionaryEntry] = []
 
     var body: some View {
         TabView {
@@ -18,11 +19,16 @@ struct SettingsView: View {
 
             aiTab
                 .tabItem { Label("AI Processing", systemImage: "brain") }
+
+            dictionaryTab
+                .tabItem { Label("Dictionary", systemImage: "character.book.closed") }
         }
-        .frame(width: 450, height: 280)
+        .frame(width: 450, height: 340)
         .onAppear {
             launchAtLogin = (try? SMAppService.mainApp.status == .enabled) ?? false
             appState.checkPermissions()
+            appState.startPermissionRecheck()
+            dictionaryEntries = DictionaryStore.load()
         }
     }
 
@@ -122,6 +128,46 @@ struct SettingsView: View {
             }
         }
         .formStyle(.grouped)
+    }
+
+    // MARK: - Dictionary Tab
+    private var dictionaryTab: some View {
+        Form {
+            Section {
+                Text("Add words and phrases that Vox should always spell a specific way.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            Section("Custom Vocabulary") {
+                ForEach($dictionaryEntries) { $entry in
+                    HStack {
+                        TextField("Heard as…", text: $entry.phrase)
+                            .textFieldStyle(.roundedBorder)
+                        Image(systemName: "arrow.right")
+                            .foregroundStyle(.secondary)
+                        TextField("Replace with…", text: $entry.replacement)
+                            .textFieldStyle(.roundedBorder)
+                        Button(role: .destructive) {
+                            dictionaryEntries.removeAll { $0.id == entry.id }
+                            DictionaryStore.save(dictionaryEntries)
+                        } label: {
+                            Image(systemName: "minus.circle.fill")
+                                .foregroundStyle(.red)
+                        }
+                        .buttonStyle(.borderless)
+                    }
+                }
+
+                Button("Add Entry") {
+                    dictionaryEntries.append(DictionaryEntry(phrase: "", replacement: ""))
+                }
+            }
+        }
+        .formStyle(.grouped)
+        .onChange(of: dictionaryEntries) { _, newValue in
+            DictionaryStore.save(newValue)
+        }
     }
 
     private func testAPIKey() {

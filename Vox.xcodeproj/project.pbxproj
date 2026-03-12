@@ -22,6 +22,7 @@
 		9A68485FEAB520131746AF9D /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B76E13415DDDA4F906D1F243 /* AppState.swift */; };
 		9F7BDD430F5D6DF4E1F7E708 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D5C594F082E45771A24B81 /* SettingsView.swift */; };
 		A3986467B177DE3FAE54926E /* DictationContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03B1357B4FE92B859CE05557 /* DictationContext.swift */; };
+		B42F8E9A5C7D34E1F0A62D83 /* DictionaryEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E4CA23D1B9F60A8D3E71B02 /* DictionaryEntry.swift */; };
 		B667336658BE3322F8B4EDF5 /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73CF1E219C41263525D8E066 /* MenuBarView.swift */; };
 		C0C1B67D08BBC00B9C6F0EAF /* RemoteConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCD7286AAEC86E366D850DCF /* RemoteConfig.swift */; };
 /* End PBXBuildFile section */
@@ -29,6 +30,7 @@
 /* Begin PBXFileReference section */
 		011EA719E530E1D89A695973 /* HotkeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyManager.swift; sourceTree = "<group>"; };
 		03B1357B4FE92B859CE05557 /* DictationContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictationContext.swift; sourceTree = "<group>"; };
+		7E4CA23D1B9F60A8D3E71B02 /* DictionaryEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryEntry.swift; sourceTree = "<group>"; };
 		17D5C594F082E45771A24B81 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		2A94697A85465F1DDF25CB95 /* Vox.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Vox.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2E6FC0B7DD6EDB86A436CBBF /* TextInjector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextInjector.swift; sourceTree = "<group>"; };
@@ -106,6 +108,7 @@
 			isa = PBXGroup;
 			children = (
 				03B1357B4FE92B859CE05557 /* DictationContext.swift */,
+				7E4CA23D1B9F60A8D3E71B02 /* DictionaryEntry.swift */,
 				DCD7286AAEC86E366D850DCF /* RemoteConfig.swift */,
 			);
 			path = Models;
@@ -260,6 +263,7 @@
 				1A02202911BBF3F9062E898C /* AudioPipeline.swift in Sources */,
 				27EE71D2978A03E518EFDE1E /* ContextEngine.swift in Sources */,
 				A3986467B177DE3FAE54926E /* DictationContext.swift in Sources */,
+				B42F8E9A5C7D34E1F0A62D83 /* DictionaryEntry.swift in Sources */,
 				56C76E63369396E30E32DB5F /* HotkeyManager.swift in Sources */,
 				05EABFB5022A7F4C25259B51 /* LLMProcessor.swift in Sources */,
 				B667336658BE3322F8B4EDF5 /* MenuBarView.swift in Sources */,

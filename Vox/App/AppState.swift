@@ -1,5 +1,6 @@
 import SwiftUI
 import AVFoundation
+@preconcurrency import ApplicationServices
 
 @MainActor
 @Observable
@@ -73,8 +74,33 @@ final class AppState {
 
     // MARK: - Permissions
     func checkPermissions() {
-        hasAccessibilityPermission = TextInjector.hasAccessibilityPermission()
-        hasMicrophonePermission = AVCaptureDevice.authorizationStatus(for: .audio) == .authorized
+        // Force a fresh accessibility check (not cached)
+        hasAccessibilityPermission = Self.checkAccessibilityTrusted(prompt: false)
+
+        let micStatus = AVCaptureDevice.authorizationStatus(for: .audio)
+        if micStatus == .authorized {
+            hasMicrophonePermission = true
+        } else if micStatus == .notDetermined {
+            // After delete/reinstall, status may be .notDetermined even if system already granted.
+            // requestAccess resolves instantly if already granted.
+            Task {
+                let granted = await AVCaptureDevice.requestAccess(for: .audio)
+                hasMicrophonePermission = granted
+            }
+        } else {
+            hasMicrophonePermission = false
+        }
+    }
+
+    /// Recheck permissions periodically (e.g. when settings window appears)
+    func startPermissionRecheck() {
+        Task {
+            for _ in 0..<5 {
+                try? await Task.sleep(for: .seconds(2))
+                checkPermissions()
+                if hasAccessibilityPermission && hasMicrophonePermission { break }
+            }
+        }
     }
 
     func requestMicrophonePermission() {
@@ -91,6 +117,11 @@ final class AppState {
             try? await Task.sleep(for: .seconds(2))
             checkPermissions()
         }
+    }
+
+    private nonisolated static func checkAccessibilityTrusted(prompt: Bool) -> Bool {
+        let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue(): prompt] as CFDictionary
+        return AXIsProcessTrustedWithOptions(options)
     }
 
     // MARK: - Dictation Flow

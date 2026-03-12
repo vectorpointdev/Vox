@@ -24,14 +24,14 @@ actor LLMProcessor {
 
                 // Return whichever finishes first
                 guard let result = try await group.next() else {
-                    return rawTranscription
+                    return applyDictionaryReplacements(rawTranscription)
                 }
                 group.cancelAll()
-                return result
+                return applyDictionaryReplacements(result)
             }
         } catch {
             // On any error (timeout, network, parse), fall back silently
-            return rawTranscription
+            return applyDictionaryReplacements(rawTranscription)
         }
     }
 
@@ -81,6 +81,21 @@ actor LLMProcessor {
         }
 
         return text
+    }
+
+    private func applyDictionaryReplacements(_ text: String) -> String {
+        let entries = DictionaryStore.load()
+        guard !entries.isEmpty else { return text }
+
+        var result = text
+        for entry in entries where !entry.phrase.isEmpty {
+            result = result.replacingOccurrences(
+                of: entry.phrase,
+                with: entry.replacement,
+                options: [.caseInsensitive]
+            )
+        }
+        return result
     }
 
     enum LLMError: Error {
