@@ -1,8 +1,9 @@
-export const config = { runtime: "edge" };
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 
-export default function handler() {
-  return Response.json({
+export default function handler(_req: VercelRequest, res: VercelResponse) {
+  res.json({
     model: process.env.WHISPER_MODEL || "base.en",
-    modelRepo: process.env.WHISPER_MODEL_REPO || "argmaxinc/whisperkit-coreml",
+    modelRepo:
+      process.env.WHISPER_MODEL_REPO || "argmaxinc/whisperkit-coreml",
   });
 }
