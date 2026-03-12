@@ -71,7 +71,14 @@ struct SettingsView: View {
                     if !appState.hasAccessibilityPermission {
                         Button("Grant") { appState.requestAccessibilityPermission() }
                             .buttonStyle(.borderless)
+                        Button("Recheck") { appState.checkPermissions() }
+                            .buttonStyle(.borderless)
                     }
+                }
+                if !appState.hasAccessibilityPermission {
+                    Text("If already granted, restart Vox for it to take effect.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
             }
         }

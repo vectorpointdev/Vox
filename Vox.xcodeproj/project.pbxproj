@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		05EABFB5022A7F4C25259B51 /* LLMProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B5A1A1943AAFDF054B3A46 /* LLMProcessor.swift */; };
+		0CD171262339808D7CCC8064 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 316DA4CE32D8F5859D52DFE2 /* Assets.xcassets */; };
 		165B2925139AEF614578B0AC /* RecordingOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A38AA5A94934E1B8A9F8BB3C /* RecordingOverlayView.swift */; };
 		1A02202911BBF3F9062E898C /* AudioPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38BA557122934089E42CFFA1 /* AudioPipeline.swift */; };
 		27EE71D2978A03E518EFDE1E /* ContextEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FD497C9598295A33CFE399 /* ContextEngine.swift */; };
@@ -22,6 +23,7 @@
 		9F7BDD430F5D6DF4E1F7E708 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17D5C594F082E45771A24B81 /* SettingsView.swift */; };
 		A3986467B177DE3FAE54926E /* DictationContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03B1357B4FE92B859CE05557 /* DictationContext.swift */; };
 		B667336658BE3322F8B4EDF5 /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73CF1E219C41263525D8E066 /* MenuBarView.swift */; };
+		C0C1B67D08BBC00B9C6F0EAF /* RemoteConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCD7286AAEC86E366D850DCF /* RemoteConfig.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +32,7 @@
 		17D5C594F082E45771A24B81 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		2A94697A85465F1DDF25CB95 /* Vox.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Vox.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2E6FC0B7DD6EDB86A436CBBF /* TextInjector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextInjector.swift; sourceTree = "<group>"; };
+		316DA4CE32D8F5859D52DFE2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		36731340BBED6559C574F1E4 /* STTEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STTEngine.swift; sourceTree = "<group>"; };
 		38BA557122934089E42CFFA1 /* AudioPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPipeline.swift; sourceTree = "<group>"; };
 		52B5A1A1943AAFDF054B3A46 /* LLMProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLMProcessor.swift; sourceTree = "<group>"; };
@@ -38,6 +41,7 @@
 		A8FD497C9598295A33CFE399 /* ContextEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextEngine.swift; sourceTree = "<group>"; };
 		A9B07E51CDF948F3FDE22A7A /* VoxApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoxApp.swift; sourceTree = "<group>"; };
 		B76E13415DDDA4F906D1F243 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		DCD7286AAEC86E366D850DCF /* RemoteConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteConfig.swift; sourceTree = "<group>"; };
 		E2305D0DB587EE5ECAFB1ED9 /* Vox.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Vox.entitlements; sourceTree = "<group>"; };
 		F462375E360361876B2362D0 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -64,6 +68,7 @@
 				132B7C63FFA073D23CF5048F /* Hotkey */,
 				57264424948ABB39D960E9FC /* LLM */,
 				209FE0C1432FF85645F146E7 /* Models */,
+				1511DF3D246D34A20D0DEA0D /* Resources */,
 				5B4FF8D2F2E087BB8B6BF8A5 /* STT */,
 				2975C3E68D3650B8E0920F37 /* TextInjection */,
 				241052A25180E7B4D56909C8 /* Views */,
@@ -89,10 +94,19 @@
 			path = App;
 			sourceTree = "<group>";
 		};
+		1511DF3D246D34A20D0DEA0D /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				316DA4CE32D8F5859D52DFE2 /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		209FE0C1432FF85645F146E7 /* Models */ = {
 			isa = PBXGroup;
 			children = (
 				03B1357B4FE92B859CE05557 /* DictationContext.swift */,
+				DCD7286AAEC86E366D850DCF /* RemoteConfig.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -172,6 +186,7 @@
 			buildConfigurationList = 94BF0D33A59CDA1423730572 /* Build configuration list for PBXNativeTarget "Vox" */;
 			buildPhases = (
 				1BF3D41140825CBD5F480100 /* Sources */,
+				2B74DBD96F063AE9BCC1C02A /* Resources */,
 				5F6A176A75805AF9AC0C3AD1 /* Frameworks */,
 			);
 			buildRules = (
@@ -225,6 +240,17 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		2B74DBD96F063AE9BCC1C02A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0CD171262339808D7CCC8064 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		1BF3D41140825CBD5F480100 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -239,6 +265,7 @@
 				B667336658BE3322F8B4EDF5 /* MenuBarView.swift in Sources */,
 				906325A6D73666BCEFA9DF2B /* OnboardingView.swift in Sources */,
 				165B2925139AEF614578B0AC /* RecordingOverlayView.swift in Sources */,
+				C0C1B67D08BBC00B9C6F0EAF /* RemoteConfig.swift in Sources */,
 				54667F8E844AC8055F183662 /* STTEngine.swift in Sources */,
 				9F7BDD430F5D6DF4E1F7E708 /* SettingsView.swift in Sources */,
 				2A5DC78D08701C75763533A0 /* TextInjector.swift in Sources */,

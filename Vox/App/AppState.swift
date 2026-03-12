@@ -104,7 +104,7 @@ final class AppState {
         statusMessage = "Listening..."
 
         if soundEnabled {
-            NSSound(named: "Tink")?.play()
+            NSSound(named: "Hero")?.play()
         }
 
         do {
@@ -129,7 +129,8 @@ final class AppState {
 
         Task {
             do {
-                print("[Vox] Captured \(samples.count) audio samples")
+                let t0 = CFAbsoluteTimeGetCurrent()
+                print("[Vox] Captured \(samples.count) audio samples (\(String(format: "%.1f", Double(samples.count) / 16000))s of audio)")
 
                 guard !samples.isEmpty else {
                     statusMessage = "No audio captured"
@@ -138,7 +139,15 @@ final class AppState {
                 }
 
                 var text = try await sttEngine.transcribe(audioSamples: samples)
-                print("[Vox] Transcription: '\(text)'")
+                let t1 = CFAbsoluteTimeGetCurrent()
+                print("[Vox] Transcription (\(String(format: "%.2f", t1 - t0))s): '\(text)'")
+
+                // Safety net: strip any remaining bracketed Whisper artifacts
+                text = text.replacingOccurrences(
+                    of: "\\[[A-Z_ ]+\\]",
+                    with: "",
+                    options: [.regularExpression, .caseInsensitive]
+                ).trimmingCharacters(in: .whitespacesAndNewlines)
 
                 if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                     statusMessage = "Couldn't understand audio"
@@ -160,10 +169,13 @@ final class AppState {
                         context: context,
                         apiKey: claudeAPIKey
                     )
+                    let t2 = CFAbsoluteTimeGetCurrent()
+                    print("[Vox] LLM processing (\(String(format: "%.2f", t2 - t1))s)")
                 }
 
                 lastTranscription = text
-                print("[Vox] Injecting text: '\(text)'")
+                let tEnd = CFAbsoluteTimeGetCurrent()
+                print("[Vox] Total pipeline: \(String(format: "%.2f", tEnd - t0))s — injecting: '\(text)'")
                 textInjector.inject(text: text)
 
                 statusMessage = "Ready"

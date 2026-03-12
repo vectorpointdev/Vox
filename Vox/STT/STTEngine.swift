@@ -8,7 +8,12 @@ final class STTEngine {
     var isLoaded: Bool { whisperKit != nil }
 
     func loadModel() async throws {
-        let config = WhisperKitConfig(model: "base.en", verbose: false)
+        let modelConfig = await RemoteConfig.fetchModelConfig()
+        let config = WhisperKitConfig(
+            model: modelConfig.model,
+            modelRepo: modelConfig.modelRepo,
+            verbose: false
+        )
         whisperKit = try await WhisperKit(config)
     }
 
@@ -20,10 +25,25 @@ final class STTEngine {
         nonisolated(unsafe) let kit = whisperKit
         let results = try await kit.transcribe(audioArray: audioSamples)
 
-        return results
-            .map { $0.text }
+        let segments = results.map { $0.text.trimmingCharacters(in: .whitespacesAndNewlines) }
+        print("[Vox STT] Raw segments: \(segments)")
+
+        // Filter out Whisper hallucination artifacts (e.g. [BLANK_AUDIO], [MUSIC PLAYING], [SILENCE])
+        let bracketPattern = try! NSRegularExpression(pattern: "\\[[A-Z_ ]+\\]", options: .caseInsensitive)
+
+        let filtered = segments
+            .map { segment in
+                bracketPattern.stringByReplacingMatches(
+                    in: segment,
+                    range: NSRange(segment.startIndex..., in: segment),
+                    withTemplate: ""
+                ).trimmingCharacters(in: .whitespacesAndNewlines)
+            }
+            .filter { !$0.isEmpty }
             .joined(separator: " ")
             .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        return filtered
     }
 
     enum STTError: Error, LocalizedError {

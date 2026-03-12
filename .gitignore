@@ -26,3 +26,6 @@ Packages/
 
 # CocoaPods (if ever used)
 Pods/
+
+# Distribution builds
+build-dist/

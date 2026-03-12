@@ -5,6 +5,7 @@ actor LLMProcessor {
 
     func process(rawTranscription: String, context: DictationContext, apiKey: String) async -> String {
         guard !apiKey.isEmpty else { return rawTranscription }
+        guard !rawTranscription.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return rawTranscription }
 
         do {
             return try await withThrowingTaskGroup(of: String.self) { group in
@@ -45,7 +46,7 @@ actor LLMProcessor {
         let appContext = context.appName.map { "The user is typing in \($0)." } ?? ""
 
         let body: [String: Any] = [
-            "model": "claude-sonnet-4-20250514",
+            "model": "claude-sonnet-4-6-20250127",
             "max_tokens": 1024,
             "system": """
                 You are a dictation post-processor. Clean up raw speech transcripts into polished text.
@@ -56,6 +57,8 @@ actor LLMProcessor {
                 - If the speaker corrects themselves ("no wait", "I mean", "actually"), keep only the correction
                 - Preserve the speaker's meaning exactly — do NOT add, remove, or change content
                 - Return ONLY the cleaned text, nothing else
+                - If the input is empty, silent, or contains only noise/filler with no real content, return an empty string
+                - NEVER generate your own text or ask questions — only clean up what was spoken
                 \(appContext)
                 """,
             "messages": [
