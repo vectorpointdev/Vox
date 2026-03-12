@@ -61,6 +61,10 @@ struct SettingsView: View {
                     if !appState.hasMicrophonePermission {
                         Button("Grant") { appState.requestMicrophonePermission() }
                             .buttonStyle(.borderless)
+                        Button("Open Settings") {
+                            NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Microphone")!)
+                        }
+                        .buttonStyle(.borderless)
                     }
                 }
                 HStack {
@@ -69,16 +73,13 @@ struct SettingsView: View {
                     Text("Accessibility")
                     Spacer()
                     if !appState.hasAccessibilityPermission {
-                        Button("Grant") { appState.requestAccessibilityPermission() }
-                            .buttonStyle(.borderless)
+                        Button("Open Settings") {
+                            NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!)
+                        }
+                        .buttonStyle(.borderless)
                         Button("Recheck") { appState.checkPermissions() }
                             .buttonStyle(.borderless)
                     }
-                }
-                if !appState.hasAccessibilityPermission {
-                    Text("If already granted, restart Vox for it to take effect.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
                 }
             }
         }

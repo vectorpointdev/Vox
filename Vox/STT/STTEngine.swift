@@ -14,7 +14,25 @@ final class STTEngine {
             modelRepo: modelConfig.modelRepo,
             verbose: false
         )
-        whisperKit = try await WhisperKit(config)
+        do {
+            whisperKit = try await WhisperKit(config)
+        } catch {
+            let errorDesc = String(describing: error)
+            if errorDesc.contains("metadata") || errorDesc.contains("corrupted") || errorDesc.contains("permission") {
+                print("[Vox STT] Corrupted model cache detected, clearing and retrying...")
+                Self.clearModelCache(repo: modelConfig.modelRepo)
+                whisperKit = try await WhisperKit(config)
+            } else {
+                throw error
+            }
+        }
+    }
+
+    private static func clearModelCache(repo: String) {
+        let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let cachePath = docs.appending(path: "huggingface/models/\(repo)")
+        try? FileManager.default.removeItem(at: cachePath)
+        print("[Vox STT] Cleared cache at \(cachePath.path)")
     }
 
     func transcribe(audioSamples: [Float]) async throws -> String {
