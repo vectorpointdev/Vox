@@ -1,0 +1,104 @@
+import Foundation
+
+actor SharedLLMProcessor {
+    private let timeoutSeconds: TimeInterval = 3
+
+    func process(rawTranscription: String, context: SharedDictationContext, apiKey: String) async -> String {
+        guard !apiKey.isEmpty else { return rawTranscription }
+        guard !rawTranscription.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return rawTranscription }
+
+        do {
+            return try await withThrowingTaskGroup(of: String.self) { group in
+                group.addTask {
+                    try await self.callClaudeAPI(
+                        rawTranscription: rawTranscription,
+                        context: context,
+                        apiKey: apiKey
+                    )
+                }
+
+                group.addTask {
+                    try await Task.sleep(for: .seconds(self.timeoutSeconds))
+                    throw LLMError.timeout
+                }
+
+                guard let result = try await group.next() else {
+                    return applyDictionaryReplacements(rawTranscription)
+                }
+                group.cancelAll()
+                return applyDictionaryReplacements(result)
+            }
+        } catch {
+            return applyDictionaryReplacements(rawTranscription)
+        }
+    }
+
+    private func callClaudeAPI(rawTranscription: String, context: SharedDictationContext, apiKey: String) async throws -> String {
+        let url = URL(string: "https://api.anthropic.com/v1/messages")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue(apiKey, forHTTPHeaderField: "x-api-key")
+        request.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")
+        request.setValue("application/json", forHTTPHeaderField: "content-type")
+
+        let appContext = context.appName.map { "The user is typing in \($0)." } ?? ""
+
+        let body: [String: Any] = [
+            "model": "claude-sonnet-4-6-20250127",
+            "max_tokens": 1024,
+            "system": """
+                You are a dictation post-processor. Clean up raw speech transcripts into polished text.
+                Rules:
+                - Remove filler words (um, uh, like, you know, so, basically)
+                - Fix grammar and punctuation
+                - Add proper capitalization
+                - If the speaker corrects themselves ("no wait", "I mean", "actually"), keep only the correction
+                - Preserve the speaker's meaning exactly — do NOT add, remove, or change content
+                - Return ONLY the cleaned text, nothing else
+                - If the input is empty, silent, or contains only noise/filler with no real content, return an empty string
+                - NEVER generate your own text or ask questions — only clean up what was spoken
+                \(appContext)
+                """,
+            "messages": [
+                ["role": "user", "content": rawTranscription]
+            ]
+        ]
+
+        request.httpBody = try JSONSerialization.data(withJSONObject: body)
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 200 else {
+            throw LLMError.apiError
+        }
+
+        guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let content = json["content"] as? [[String: Any]],
+              let text = content.first?["text"] as? String else {
+            throw LLMError.parseError
+        }
+
+        return text
+    }
+
+    private func applyDictionaryReplacements(_ text: String) -> String {
+        let entries = SharedDictionaryStore.load()
+        guard !entries.isEmpty else { return text }
+
+        var result = text
+        for entry in entries where !entry.phrase.isEmpty {
+            result = result.replacingOccurrences(
+                of: entry.phrase,
+                with: entry.replacement,
+                options: [.caseInsensitive]
+            )
+        }
+        return result
+    }
+
+    enum LLMError: Error {
+        case apiError
+        case parseError
+        case timeout
+    }
+}
